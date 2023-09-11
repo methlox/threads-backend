@@ -1,5 +1,5 @@
 import express from "express";
-import { ApolloServer } from "@apollo/server";
+import createApolloGqlServer from "./graphql";
 import { expressMiddleware } from "@apollo/server/express4";
 // import { prismaClient } from "./lib/db";
 
@@ -9,6 +9,15 @@ async function init() {
 
   // parse all the json responses
   app.use(express.json());
+
+  app.get("/", (req, res) => {
+    res.json({ message: "server is running" });
+  });
+
+  // expose our gql server to port
+  app.use("/graphql", expressMiddleware(await createApolloGqlServer()));
+
+  app.listen(PORT, () => console.log(`Server started at PORT: ${PORT}`));
 
   // // create gql server
   // const gqlServer = new ApolloServer({
@@ -57,15 +66,6 @@ async function init() {
   // });
 
   // await gqlServer.start();
-
-  app.get("/", (req, res) => {
-    res.json({ message: "server is running" });
-  });
-
-  // expose our gql server to port
-  app.use("/graphql", expressMiddleware(gqlServer));
-
-  app.listen(PORT, () => console.log(`Server started at PORT: ${PORT}`));
 }
 
 init();
