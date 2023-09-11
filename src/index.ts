@@ -1,6 +1,7 @@
 import express from "express";
 import createApolloGqlServer from "./graphql";
 import { expressMiddleware } from "@apollo/server/express4";
+import UserService from "./services/user";
 // import { prismaClient } from "./lib/db";
 
 async function init() {
@@ -15,7 +16,19 @@ async function init() {
   });
 
   // expose our gql server to port
-  app.use("/graphql", expressMiddleware(await createApolloGqlServer()));
+  app.use("/graphql", expressMiddleware(await createApolloGqlServer(), {
+    context: async ({ req }) => {
+      // @ts-ignore
+      const token = req.headers["token"];
+
+      try {
+        const user = UserService.decodeJWTToken(token as string);
+        return { user };
+      } catch (error) {
+        return {};
+      }
+    },
+  }));
 
   app.listen(PORT, () => console.log(`Server started at PORT: ${PORT}`));
 
