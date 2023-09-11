@@ -2,6 +2,8 @@ import { createHmac, randomBytes } from "node:crypto";
 import { prismaClient } from "../lib/db";
 import JWT from "jsonwebtoken";
 
+const JWT_SECRET = "$uperM@n@123";
+
 export interface CreateUserPayload {
   firstName: string;
   lastName?: string;
