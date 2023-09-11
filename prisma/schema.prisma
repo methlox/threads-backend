@@ -9,3 +9,15 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id String @id @default(uuid()) // provides a default id if we don't provide one
+  firstName String @map("first_name") // fN for code level and f_n for database (not necessary) 
+  lastName String? @map("last_name")
+  profileImageURL String? @map("profile_image_url")
+  email String @unique
+  password String
+  salt String
+
+  @@map("users") // user will be stored in a table users
+}
